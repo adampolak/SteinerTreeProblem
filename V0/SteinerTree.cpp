@@ -3,6 +3,7 @@
 #include "utils.h"
 using namespace std;
 
+int generation = 0;
 bool volatile finished = false;
 SteinerTreeProblem* SteinerTree::SteinerTreeproblem;
 DSU dsu; 
@@ -170,8 +171,6 @@ void SteinerTree::hillClimbing(){
 				bestI = *this;
 				sigprocmask(SIG_UNBLOCK, &sign, NULL);
 			}
-			//best = min(best, fitness);
-			//printf("Fitness = %lld %lld\n", fitness, best);
 			long long F = fitness;
 			vector<bool> nI = I;
 			if(I[p[i]]){
@@ -237,7 +236,6 @@ bool SteinerTree::isCorrect(unordered_map<int, vector<pair<int, long long> > > &
 
 void SteinerTree::localSearch(){
 	hillClimbing();
-	//printf("fitness = %lld %lld\n", fitness, best);
 }
 
 void SteinerTree::reset(vector<bool> &nI){
@@ -333,7 +331,6 @@ void SteinerTree::restart(){
 	for(int i = 0; i < (SteinerTreeproblem->n); i++) if(!I[i]) vc.push_back(i);
 	
 	while(mx != ttl){
-		//printf("mx = %d, ttl = %d\n", mx, ttl);
 		int id = rand()%((int)vc.size());
 		int u = vc[id];
 		I[u] = true;
@@ -345,52 +342,12 @@ void SteinerTree::restart(){
 		vc.pop_back();
 	}
 	
-	/*
-	for(int i = 0; i < (int)I.size(); i++) I[i] = true;
-	for(int u = 0; u < SteinerTreeproblem->n; u++)
-		FOREACH(v, (SteinerTreeproblem->adj)[u]) if(v->first < u){
-			edges.insert(edge(v->first, u, v->second));
-		}
-	if(!first){
-		for(int u = 0; u < SteinerTreeproblem->n; u++) if(!(SteinerTreeproblem->fixed)[u] && rand()/(RAND_MAX + 1.0) < 0.2){
-			I[u] = false;
-			FOREACH(v, (SteinerTreeproblem->adj)[u]) edges.erase(edge(min(u, v->first), max(u, v->first), v->second));
-		}
-	}
-	else first = false;*/
 	dsu = DSU((int)I.size());
 	
 	
 	
 	localSearch();
 }
-
-//Se incluyen algunos del otro y se dejan todos los que estan
-/*void SteinerTree::crossover(SteinerTree &ind2){
-	for (int i = 0; i < I.size(); i++){
-		if (I[i]){
-			if (generateRandomDouble0_Max(1) < 0.5){
-				ind2.I[i] = true;
-			}
-		}
-	}
-	for (int i = 0; i < I.size(); i++){
-		if (ind2.I[i]){
-			if (generateRandomDouble0_Max(1) < 0.5){
-				I[i] = true;
-			}
-		}
-	}
-}*/
-
-/*
-void SteinerTree::mutate(double pm){
-	for (int i = 0; i < I.size(); i++){
-		if (generateRandomDouble0_Max(1) < pm){
-			I[i] = true;
-		}
-	}
-}*/
 
 void SteinerTree::addCrossover(SteinerTree &ind2){
 	for (int i = 0; i < I.size(); i++){

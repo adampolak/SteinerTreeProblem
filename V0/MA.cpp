@@ -25,7 +25,6 @@ MA::MA(int N_, double pc_, double pm_, double finalTime_){
 
 void MA::initPopulation(){
 	for (int i = 0; i < N; i++){
-		//cout << "Crea ind " << i << endl;
 		ExtendedIndividual *ei = new ExtendedIndividual();
 		ei->ind.restart();
 		population.push_back(ei);
@@ -105,7 +104,6 @@ void MA::replacement(){
 
 	//Select next N - 1 solution
 	double D = DI - DI * elapsedTime / finalTime;
-	//cout << "Distancia requerida: " << D << endl;
 	while(population.size() != N){
 		//Update distances
 		for (int i = 0; i < all.size(); i++){
@@ -146,7 +144,6 @@ void MA::initDI(){
 	for (int i = 0; i < population.size(); i++){
 		for (int j = i + 1; j < population.size(); j++){
 			meanDistance += population[i]->ind.getDistance(population[j]->ind);
-			//cout << "Distancia: " << population[i]->ind.getDistance(population[j]->ind) << endl;
 		}
 	}
 	meanDistance /= ((population.size() * (population.size() - 1)) / 2);
@@ -156,7 +153,7 @@ void MA::initDI(){
 void MA::run(){
 	initPopulation();
 	initDI();
-	int generation = 0;
+	generation = 0;
 	while(true){
 		selectParents();
 		crossover();
@@ -165,6 +162,5 @@ void MA::run(){
 		replacement();
 		generation++;
 	}
-	printBest();
 }
 

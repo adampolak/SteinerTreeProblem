@@ -98,7 +98,6 @@ bool SteinerTree::calculateFitness2(){
 		sigset_t sign;
 		sigemptyset(&sign);
 		sigaddset(&sign, SIGTERM);
-		//sigaddset(&sign, SIGALRM);
 		sigprocmask(SIG_BLOCK, &sign, NULL);
 		bestI.I.clear();
 		for(int u = 0; u < (SteinerTreeproblem->n); u++){
@@ -200,15 +199,6 @@ void SteinerTree::localSearch(){
 	printf("fitness = %lld %lld\n", fitness, Globalbest);
 }
 
-/*
-void SteinerTree::reset(vector<bool> &nI){
-	I = nI;
-	edges.clear();
-	for(int u = 0; u < (SteinerTreeproblem->n); u++)
-		if(nI[u]) FOREACH(v, (SteinerTreeproblem->adj)[u]) if(v->first < u && I[v->first]) edges.insert(edge(v->first, u, v->second));
-	calculateFitness2();
-}*/
-
 void SteinerTree::reset(){
 	edges.clear();
 	for(int u = 0; u < (SteinerTreeproblem->n); u++)
@@ -218,8 +208,6 @@ void SteinerTree::reset(){
 }
 
 SteinerTreeProblem::SteinerTreeProblem(){
-	//ifstream ifs;
-	//ifs.open(fileName.c_str());
 	string s;
 	cin >> s;
 	cin >> s;
@@ -291,39 +279,9 @@ void SteinerTree::restart(){
 	for(int i = 0; i < (SteinerTreeproblem->n); i++) 
 		if(rand()/(RAND_MAX + 1.0) < 0.15) I[i] = true;
 	dsu = DSU((int)I.size());
-
-	//I[45-1] = I[170-1] = I[10-1] = I[5-1] = true; //I[2-1] = true;	
-
 	calculateFitness();
 	return;
 }
-
-//Se incluyen algunos del otro y se dejan todos los que estan
-/*void SteinerTree::crossover(SteinerTree &ind2){
-	for (int i = 0; i < I.size(); i++){
-		if (I[i]){
-			if (generateRandomDouble0_Max(1) < 0.5){
-				ind2.I[i] = true;
-			}
-		}
-	}
-	for (int i = 0; i < I.size(); i++){
-		if (ind2.I[i]){
-			if (generateRandomDouble0_Max(1) < 0.5){
-				I[i] = true;
-			}
-		}
-	}
-}*/
-
-/*
-void SteinerTree::mutate(double pm){
-	for (int i = 0; i < I.size(); i++){
-		if (generateRandomDouble0_Max(1) < pm){
-			I[i] = true;
-		}
-	}
-}*/
 
 void SteinerTree::addCrossover(SteinerTree &ind2){
 }
@@ -331,9 +289,6 @@ void SteinerTree::addCrossover(SteinerTree &ind2){
 void SteinerTree::uniformCrossover(SteinerTree &ind){
 	for(int i = 0; i < (SteinerTreeproblem->n); i++)
 		if(rand()%2 == 0) swap(I[i], (ind.I)[i]);
-	
-	//reset(I);
-	//ind.reset(ind.I);
 	calculateFitness();
 	ind.calculateFitness();
 }
@@ -342,11 +297,6 @@ int SteinerTree::getDistance(SteinerTree &ind){
 	int ans = 0;
 	for(int i = 0; i < (SteinerTreeproblem->n); i++)
 		if(I[i] != (ind.I)[i]) ans++;
-	//cout << "Dist1: " << ans << endl;
-	int ans2 = 0;
-	for(int i = 0; i < (SteinerTreeproblem->n); i++)
-		if(IComplete[i] != (ind.IComplete)[i]) ans2++;
-	//cout << "Dist2: " << ans2 << endl;
 	return ans;
 }
 
@@ -363,45 +313,8 @@ void SteinerTree::uniformMutation(double pm){
 			changed = true;
 			I[i] = !I[i];
 		}
-	/*vector<int> ones, zeros;
-	for(int i = 0; i < (SteinerTreeproblem->n); i++) 
-		if(!(SteinerTreeproblem->fixed)[i])
-			if (I[i])
-				ones.push_back(i);
-			else
-				zeros.push_back(i);
-	if (ones.size() == 0) return;
-	if (zeros.size() == 0) return;*/
-	/*cout << "Solucion" << endl;
-	for (int i = 0; i < ones.size(); i++){
-		cout << ones[i] << " ";
-	}
-	cout << endl;*/
-/*	int r1 = zeros[rand() % zeros.size()];
-	I[zeros[r1]] = true;
-	while(ones.size() > 4){
-		int index = rand() % ones.size();
-		int r2 = ones[index];
-		I[r2] = false;
-		ones[index] = ones.back();
-		ones.pop_back();
-	}
-	ones.clear();
-	for(int i = 0; i < (SteinerTreeproblem->n); i++) 
-		if(!(SteinerTreeproblem->fixed)[i])
-			if (I[i])
-				ones.push_back(i);
-			else
-				zeros.push_back(i);*/
-	//cout << "Cantidad: " << ones.size() << endl;
-	/*int r1 = zeros[rand() % zeros.size()], r2 = ones[rand() % ones.size()];//Warning
-	I[r1] = !I[r1];
-	I[r2] = !I[r2];*/
-	//changed = true;
-	//reset(I);
 	if (changed){
 		calculateFitness();
-		//cout << "Comp: " << prevFitness << " " << fitness << endl;
 		if (prevFitness < fitness){
 			I = prevI;
 			IComplete = prevIComplete;
@@ -411,15 +324,12 @@ void SteinerTree::uniformMutation(double pm){
 }
 
 void SteinerTree::dependentMutation(double pm){
-	//cout << "empieza mut" << endl;
 	int limit = (generation < 100)?0:5;
-	//limit = 1;
 	for (int i = 0; i < limit; i++){
 		if (SteinerTreeproblem->n - SteinerTreeproblem->fs.size() != 0){
 			uniformMutation(2.0 / (SteinerTreeproblem->n - SteinerTreeproblem->fs.size()));
 		}
 	}
-	//cout << "termina" << endl;
 }
 
 void SteinerTree::dependentCrossover(SteinerTree &ind){
@@ -521,103 +431,16 @@ void SteinerTreeProblem::dijkstra(vector<int> &u, vector<long long> &dist, vecto
 
 long long fitnessBest = 1e15;
 
-/*
-void SteinerTree::evaluateMinDistances(){
-	long long best = 1e15;
-	vector<bool> Ibest;
-	int cnt_break = 0;
-	vector<bool> bestTree;
-	int threshold;
-	if (random() % 2 == 0){
-		threshold = 0;
-	} else {
-		threshold = random() % 5;
-	}
-	while(true){
-		int u = (SteinerTreeproblem->fs)[rand()%((int)(SteinerTreeproblem->fs).size())];
-		fitness = 0;
-		vector<long long> dist;
-		vector<int> p;
-		vector<bool> tree;
-		vector<int> nodes;
-		nodes.push_back(u);
-		priority_queue<pair<long long, int>, vector<pair<long long, int> >, greater<pair<long long, int> > > pq;
-		SteinerTreeproblem->dijkstra(nodes, dist, p, tree, pq, I);
-		vector<int> cnt(SteinerTreeproblem->n, 0);
-		while(true){
-			if (threshold != 0)
-				threshold = 1 + random() % 4;
-			long long mn = 1e15;
-			u = -1;
-			vector<int> ties;
-			for(int i = 0; i < (SteinerTreeproblem->n); i++){
-				if(I[i] && !tree[i] && dist[i] < mn){
-					mn = dist[i];
-				}
-			}
-			for(int i = 0; i < (SteinerTreeproblem->n); i++){
-				if(I[i] && !tree[i] && dist[i] <= mn + threshold){
-					ties.push_back(i);
-				}
-			}
-			if (ties.size() == 0) break;
-			u = ties[random() % (ties.size())];
-			fitness += dist[u];
-			vector<int> path;
-			while(!tree[u]){
-				path.push_back(u);
-				cnt[u]++, cnt[p[u]]++;
-				u = p[u];
-			}
-			reverse(path.begin(), path.end());
-			SteinerTreeproblem->dijkstra(path, dist, p, tree, pq, I);
-			if (finished){
-				printBest();
-				exit(0);
-			}
-		}
-		if(best > fitness){
-			best = fitness;
-			Ibest = I;
-			bestTree = tree;
-			cnt_break = 0;
-			if(fitness < Globalbest){
-				sigset_t sign;
-				sigemptyset(&sign);
-				sigaddset(&sign, SIGTERM);
-				sigprocmask(SIG_BLOCK, &sign, NULL);
-				Globalbest = fitness;
-				bestI.I = bestTree;
-				sigprocmask(SIG_UNBLOCK, &sign, NULL);
-			}
-		}
-		else cnt_break++;
-		if(cnt_break > 3) break;
-		for(int u = 0; u < (SteinerTreeproblem->n); u++){
-			if((SteinerTreeproblem->fixed)[u] || cnt[u] >= 3) I[u] = true; 
-			else I[u] = false;
-		}
-	}
-	I = Ibest;
-	fitness = best;
-}*/
-
-
 void SteinerTree::evaluateMinDistances(){
 	long long best = 1e15;
 	hsh_r = vector<int>(SteinerTreeproblem->n, 1);
 	vector<bool> Ibest, ICompletebest;
 	int cnt_break = 0;
-	/*if(rand()%2 == 0) tol = 0;
-	else tol = rand()%9 + 1;*/
-	//int maxTol = generation / 100;
-	//maxTol = min(maxTol, 5);
 	currentTol = rand() % 2;
 	if (currentTol != 0){
 		currentTol = 1 + rand() % (maxThreshold + 1);
 	}
 
-	//int typeTransform = random() % 2;
 	int selectionType = random() % 2;
 
 	while(true){
@@ -635,14 +458,6 @@ void SteinerTree::evaluateMinDistances(){
 		int aux = 0;
 		int connected = 1;
 
-		/*
-		vector<int> active;
-		for(int i = 0; i < (SteinerTreeproblem->n); i++){
-			if (I[i]){
-				active.push_back(i);
-			}
-		}*/
-		//cout << "Numero de activos: " << active.size() << endl;
 		while(true){
      if (connected == SteinerTreeproblem->fs.size()){
         for (int i = 0; i < SteinerTreeproblem->n; i++){
@@ -714,19 +529,14 @@ void SteinerTree::evaluateMinDistances(){
       }   
 
 			order.erase(make_pair(dist[u], u)); // Eliminamos el ya utilizado
-			//active[selectedIndex] = active.back();
-			//active.pop_back();
 			fitness += dist[u];
 			vector<int> path;
 			while(!tree[u]){
 				path.push_back(u);
 				cnt[u]++, cnt[p[u]]++;
 				u = p[u];
-				//printf("size = %d, u = %d, p = %d, it = %d\n", (int)path.size(), u, p[u], aux);
 			}
 			reverse(path.begin(), path.end());
-			//for(int i = 0; i < (int)path.size(); i++) SteinerTreeproblem->dijkstra(path[i], dist, p, tree);
-			//if (aux % 1000 == 0) cout << "Llama " << aux << endl;
 			SteinerTreeproblem->dijkstra(path, dist, p, tree, pq, I);
 			if (finished){
 				printBest();
@@ -747,7 +557,6 @@ void SteinerTree::evaluateMinDistances(){
 		I = copyI;
 
 		if(best > fitness){
-			//printf("best = %lld\n", best);                              
 			best = fitness;
 			Ibest = I;
 			ICompletebest = IComplete;
@@ -764,7 +573,6 @@ void SteinerTree::evaluateMinDistances(){
 				ones++;
 			}
 		}
-		//cout<< "Hay " << ones << endl;
 		int equals = 0;
 		//if (typeTransform == 0){
 			for(int u = 0; u < (SteinerTreeproblem->n); u++){
@@ -780,7 +588,4 @@ void SteinerTree::evaluateMinDistances(){
 	I = Ibest;
 	IComplete = ICompletebest;
 	fitness = best;
-	//printf("best = %lld, fitness = %lld\n", Globalbest, fitness);
-	//printBest();
 }
-

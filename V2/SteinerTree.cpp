@@ -3,6 +3,7 @@
 #include "utils.h"
 using namespace std;
 
+int generation = 0;
 bool volatile finished = false;
 SteinerTreeProblem* SteinerTree::SteinerTreeproblem;
 DSU dsu; 
@@ -84,13 +85,8 @@ bool SteinerTree::calculateFitness(){
 	int Su = -1;
 	Su = dsu.getS((SteinerTreeproblem->fs)[0]);
 	FOREACH(u, SteinerTreeproblem->fs) if(dsu.getS(*u) != Su) connected = false;
-	//FOREACH(v, dsu.used) if(dsu.getS(*v) != Su) connected = false;
-	//int t = 0;
-	//for(int u = 0; u < (SteinerTreeproblem->n); u++) if((SteinerTreeproblem->fixed)[u] && dsu.getS(u) != Su) connected = false;
-	//connected = (c == t - 1);
 	if(connected){
 		queue<int> q;
-		//for(int u = 0; u < (SteinerTreeproblem->n); u++) if(cnt.count(u) == 0 && I[u]) I[u] = false;
 		FOREACH(v, dsu.used) if(cnt[*v] == 1 && !(SteinerTreeproblem->fixed)[*v]) q.push(*v);
 		while(!q.empty()){
 			int u = q.front(); q.pop();
@@ -187,10 +183,7 @@ void SteinerTree::hillClimbing(){
 				Globalbest = fitness;
 				bestI = *this;
 				sigprocmask(SIG_UNBLOCK, &sign, NULL);
-				//printBest();
 			}
-			//best = min(best, fitness);
-			//printf("Fitness = %lld %lld\n", fitness, best);
 			long long F = fitness;
 			vector<bool> nI = I;
 			if(I[p[i]]){
@@ -202,10 +195,6 @@ void SteinerTree::hillClimbing(){
 				}
 			}
 			else{
-				/*vector<int> vc; vc.push_back(p[i]);
-				for(int k = 0; k < 2; k++) vc.push_back(rand()%((int)p.size()));
-				insert(vc);
-				*/
 				
 				insert(p[i]);
 				if(fitness < F){
@@ -282,8 +271,6 @@ void SteinerTree::reset(vector<bool> &nI){
 }
 
 SteinerTreeProblem::SteinerTreeProblem(){
-	//ifstream ifs;
-	//ifs.open(fileName.c_str());
 	string s;
 	cin >> s;
 	cin >> s;
@@ -387,32 +374,6 @@ void SteinerTree::restart(){
 	localSearch();
 }
 
-//Se incluyen algunos del otro y se dejan todos los que estan
-/*void SteinerTree::crossover(SteinerTree &ind2){
-	for (int i = 0; i < I.size(); i++){
-		if (I[i]){
-			if (generateRandomDouble0_Max(1) < 0.5){
-				ind2.I[i] = true;
-			}
-		}
-	}
-	for (int i = 0; i < I.size(); i++){
-		if (ind2.I[i]){
-			if (generateRandomDouble0_Max(1) < 0.5){
-				I[i] = true;
-			}
-		}
-	}
-}*/
-
-/*
-void SteinerTree::mutate(double pm){
-	for (int i = 0; i < I.size(); i++){
-		if (generateRandomDouble0_Max(1) < pm){
-			I[i] = true;
-		}
-	}
-}*/
 
 void SteinerTree::addCrossover(SteinerTree &ind2){
 	for (int i = 0; i < I.size(); i++){

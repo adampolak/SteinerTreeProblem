@@ -3,6 +3,7 @@
 #include "utils.h"
 using namespace std;
 
+int generation = 0;
 bool volatile finished = false;
 SteinerTreeProblem* SteinerTree::SteinerTreeproblem;
 DSU dsu; 
@@ -110,10 +111,6 @@ bool SteinerTree::calculateFitness(){
 				if(cnt[v->first] == 1 && !(SteinerTreeproblem->fixed)[v->first]) q.push(v->first);
 			}
 		}
-		/*for(int i = 0; i < (SteinerTreeproblem->n); i++){
-			if((SteinerTreeproblem->fixed)[i] || cnt[i] >= 3) I[i] = true;
-			else I[i] = false;
-		}*/
 	}
 	else fitness = (long long)1e15;
 	dsu.reset();
@@ -169,9 +166,7 @@ SteinerTree bestI;
 void printBest(){
 	unordered_map<int, vector<pair<int, long long> > > mst;
 	bestI.getMST(mst);
-	//bestI.print(mst);
 	bool correct = bestI.isCorrect(mst);
-	//printf("%s\n", correct ? "YES" : "NO");
 	if(!correct){
 		printf("NO\n");
 	}
@@ -200,10 +195,7 @@ void SteinerTree::hillClimbing(){
 				Globalbest = fitness;
 				bestI = *this;
 				sigprocmask(SIG_UNBLOCK, &sign, NULL);
-				//printBest();
 			}
-			//best = min(best, fitness);
-			//printf("Fitness = %lld %lld\n", fitness, best);
 			long long F = fitness;
 			vector<bool> nI = I;
 			if(I[p[i]]){
@@ -215,11 +207,6 @@ void SteinerTree::hillClimbing(){
 				}
 			}
 			else{
-				/*vector<int> vc; vc.push_back(p[i]);
-				for(int k = 0; k < 2; k++) vc.push_back(rand()%((int)p.size()));
-				insert(vc);
-				*/
-				
 				insert(p[i]);
 				if(fitness < F){
 					noImprove = 0;
@@ -227,7 +214,6 @@ void SteinerTree::hillClimbing(){
 					continue;
 				}
 			}
-			//if(rand()%2 == 0 && I[p[i]]) continue;
 			noImprove++;
 			reset(nI);
 			if(noImprove > 5) return;
@@ -295,8 +281,6 @@ void SteinerTree::reset(vector<bool> &nI){
 }
 
 SteinerTreeProblem::SteinerTreeProblem(){
-	//ifstream ifs;
-	//ifs.open(fileName.c_str());
 	string s;
 	cin >> s;
 	cin >> s;
@@ -313,7 +297,6 @@ SteinerTreeProblem::SteinerTreeProblem(){
 		edges.push_back(edge(u, v, w));
 		adj[u].push_back(make_pair(v, w));
 		adj[v].push_back(make_pair(u, w));
-		//if(w == 0) while(true) printf("u = %d, v = %d\n", u, v);
 	}
 	sort(edges.begin(), edges.end());
 	cin >> s;
@@ -400,33 +383,6 @@ void SteinerTree::restart(){
 	
 	localSearch();
 }
-
-//Se incluyen algunos del otro y se dejan todos los que estan
-/*void SteinerTree::crossover(SteinerTree &ind2){
-	for (int i = 0; i < I.size(); i++){
-		if (I[i]){
-			if (generateRandomDouble0_Max(1) < 0.5){
-				ind2.I[i] = true;
-			}
-		}
-	}
-	for (int i = 0; i < I.size(); i++){
-		if (ind2.I[i]){
-			if (generateRandomDouble0_Max(1) < 0.5){
-				I[i] = true;
-			}
-		}
-	}
-}*/
-
-/*
-void SteinerTree::mutate(double pm){
-	for (int i = 0; i < I.size(); i++){
-		if (generateRandomDouble0_Max(1) < pm){
-			I[i] = true;
-		}
-	}
-}*/
 
 void SteinerTree::addCrossover(SteinerTree &ind2){
 	for (int i = 0; i < I.size(); i++){

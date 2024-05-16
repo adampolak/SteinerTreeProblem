@@ -28,7 +28,6 @@ void MA::initPopulation(){
 	gettimeofday(&initTime, NULL);
 	double time = ((double) (initTime.tv_sec) * 1.0e6 + (double) (initTime.tv_usec))/1.0e6;
 	for (int i = 0; i < N; i++){
-		//cout << "Crea ind " << i << endl;
 		ExtendedIndividual *ei = new ExtendedIndividual();
 		ei->ind.restart();
 		population.push_back(ei);
@@ -37,7 +36,6 @@ void MA::initPopulation(){
 			gettimeofday(&currentTime, NULL);
 			double time2 = ((double) (currentTime.tv_sec) * 1.0e6 + (double) (currentTime.tv_usec))/1.0e6;
 			double elapsed = time2 - time;
-			//cout << "Va: " << elapsed << endl;
 			if (elapsed > 30 * 60.0 / 500){
 				N = i + 1;
 			}
@@ -124,7 +122,6 @@ void MA::replacement(){
 
 	//Select next N - 1 solution
 	double D = DI - DI * elapsedTime / finalTime;
-	//cout << "Distancia requerida: " << D << endl;
 	while(population.size() != N){
 		//Update distances
 		for (int i = 0; i < all.size(); i++){
@@ -165,7 +162,6 @@ void MA::initDI(){
 	for (int i = 0; i < population.size(); i++){
 		for (int j = i + 1; j < population.size(); j++){
 			meanDistance += population[i]->ind.getDistance(population[j]->ind);
-			//cout << "Distancia: " << population[i]->ind.getDistance(population[j]->ind) << endl;
 		}
 	}
 	meanDistance /= ((population.size() * (population.size() - 1)) / 2);
