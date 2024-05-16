@@ -13,8 +13,8 @@ void printer(int signal){
 
 MA::MA(int N_, double pc_, double pm_, double finalTime_){
 	signal(SIGTERM, printer);
-	if (N % 2){ cerr << "El tam. de poblacion debe ser par" << endl; exit(-1); }
 	N = N_;
+	if (N % 2){ cerr << "El tam. de poblacion debe ser par" << endl; exit(-1); }
 	pc = pc_;
 	pm = pm_;
 	finalTime = finalTime_;
@@ -28,7 +28,7 @@ void MA::initPopulation(){
 		//cout << "Crea ind " << i << endl;
 		ExtendedIndividual *ei = new ExtendedIndividual();
 		ei->ind.restart();
-		population.push_back(ei);	
+		population.push_back(ei);
 	}
 }
 
@@ -149,7 +149,7 @@ void MA::initDI(){
 			//cout << "Distancia: " << population[i]->ind.getDistance(population[j]->ind) << endl;
 		}
 	}
-	meanDistance /= (population.size() * (population.size() - 1)) / 2;
+	meanDistance /= ((population.size() * (population.size() - 1)) / 2);
 	DI = meanDistance * 1;//TODO: Check
 }
 
@@ -157,16 +157,7 @@ void MA::run(){
 	initPopulation();
 	initDI();
 	int generation = 0;
-	while(true){//Infinitas generaciones
-		int minDistance = INT_MAX;
-		for (int i = 0; i < population.size(); i++){
-			for (int j = i + 1; j < population.size(); j++){
-				minDistance = min(minDistance, population[i]->ind.getDistance(population[j]->ind));
-			}
-		}
-		//cout << "Distancia: " << minDistance << endl;
-
-		//cout << "Generacion " << generation << endl;
+	while(true){
 		selectParents();
 		crossover();
 		mutation();

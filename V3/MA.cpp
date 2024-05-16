@@ -13,7 +13,6 @@ void printer(int signal){
 
 MA::MA(int N_, double pc_, double pm_, double finalTime_){
 	signal(SIGTERM, printer);
-	//signal(SIGALRM, printer);
 	N = N_;
 	if (N % 2){ cerr << "El tam. de poblacion debe ser par" << endl; exit(-1); }
 	pc = pc_;
@@ -44,7 +43,6 @@ void MA::initPopulation(){
 			}
 		}
 	}
-	//cout << "Tam. pob: " << N << endl;
 }
 
 //Select parents with binary selection
@@ -98,13 +96,11 @@ void MA::replacement(){
 	
 	//Join population and offspring
 	for (int i = 0; i < population.size(); i++){
-		//cout << "Valor: " << population[i]->ind.fitness << endl;
 		all.push_back(population[i]);
 		all.back()->dist = INT_MAX;
 	}
 	population.clear();
 	for (int i = 0; i < offspring.size(); i++){
-		//cout << "Valor: " << offspring[i]->ind.fitness << endl;
 		all.push_back(offspring[i]);
 		all.back()->dist = INT_MAX;
 	}
@@ -117,7 +113,6 @@ void MA::replacement(){
 			indexBest = i;
 		}
 	}
-	//cout << "Mete a: " << all[indexBest]->ind.fitness << endl;
 	population.push_back(all[indexBest]);
 	all[indexBest] = all.back();
 	all.pop_back();
@@ -130,8 +125,6 @@ void MA::replacement(){
 	//Select next N - 1 solution
 	double D = DI - DI * elapsedTime / finalTime;
 	//cout << "Distancia requerida: " << D << endl;
-	set<long long> acceptedFitness;
-	acceptedFitness.insert(population[0]->ind.fitness);
 	while(population.size() != N){
 		//Update distances
 		for (int i = 0; i < all.size(); i++){
@@ -144,14 +137,9 @@ void MA::replacement(){
 			bool eqInDist = (all[i]->dist == all[indexBest]->dist);
 			bool betterInFit = (all[i]->ind.fitness < all[indexBest]->ind.fitness);
 			bool eqInFit = (all[i]->ind.fitness == all[indexBest]->ind.fitness);
-			/*if ((acceptedFitness.count(all[indexBest]->ind.fitness) != 0) && (acceptedFitness.count(all[i]->ind.fitness) == 0)){
-				indexBest = i;
-			} else if ((acceptedFitness.count(all[indexBest]->ind.fitness) == 0) && (acceptedFitness.count(all[i]->ind.fitness) != 0)){
-			} else */
 			if (all[indexBest]->dist < D){//Do not fulfill distance requirement
 				if ((betterInDist) || (eqInDist && betterInFit)){
 					indexBest = i;
-					//cout << "Entra: " << all[indexBest]->dist << endl;
 				}
 			} else {
 				if (all[i]->dist >= D){
@@ -162,9 +150,7 @@ void MA::replacement(){
 			}
 		}
 		//Insert best option
-		//cout << "Elegido tiene distancia: " << all[indexBest]->dist << endl;
 		population.push_back(all[indexBest]);
-		acceptedFitness.insert(all[indexBest]->ind.fitness);
 		all[indexBest] = all.back();
 		all.pop_back();
 	}
@@ -182,7 +168,7 @@ void MA::initDI(){
 			//cout << "Distancia: " << population[i]->ind.getDistance(population[j]->ind) << endl;
 		}
 	}
-	meanDistance /= (population.size() * (population.size() - 1)) / 2;
+	meanDistance /= ((population.size() * (population.size() - 1)) / 2);
 	DI = meanDistance * 0.5;//TODO: Check
 }
 
@@ -190,22 +176,7 @@ void MA::run(){
 	initPopulation();
 	initDI();
 	generation = 0;
-	while(true){//Infinitas generaciones
-		/*int minDistance = INT_MAX;
-		int maxDistance = 0;
-		cout << "Fitness" << endl;
-		for (int i = 0; i < population.size(); i++){
-			cout << population[i]->ind.fitness << endl;
-			for (int j = i + 1; j < population.size(); j++){
-				int d = population[i]->ind.getDistance(population[j]->ind);
-				maxDistance = max(maxDistance, d);
-				minDistance = min(minDistance, d);
-			}
-		}
-		cout << "Min Distancia: " << minDistance << endl;
-		cout << "Max Distancia: " << maxDistance << endl;*/
-
-		//cout << "Generacion " << generation << endl;
+	while(true){
 		selectParents();
 		crossover();
 		mutation();

@@ -121,36 +121,6 @@ bool SteinerTree::calculateFitness(){
 }
 
 
-void SteinerTreeProblem::transform(vector<bool> &I, vector<bool> &tree, long long &fitness){
-	unordered_map<int, vector<pair<int, long long> > > mst;
-	unordered_map<int, int> cnt;
-	fitness = 0;
-	dsu.reset(n);
-	FOREACH(e, edges) if(tree[e->u] && tree[e->v] && !dsu.sameSet(e->u, e->v)){
-		dsu.join(e->u, e->v);
-		cnt[e->u]++, cnt[e->v]++;
-		fitness += e->w;
-		mst[e->u].push_back(make_pair(e->v, e->w));
-		mst[e->v].push_back(make_pair(e->u, e->w));
-	}
-	dsu.reset();
-	queue<int> q;
-	for(int i = 0; i < n; i++) if(!fixed[i] && cnt[i] == 1) q.push(i);
-	while(!q.empty()){
-		int u = q.front(); q.pop();
-		tree[u] = false;
-		FOREACH(v, mst[u]) if(tree[v->first]){
-			cnt[v->first]--;
-			fitness -= v->second;
-			if(cnt[v->first] == 1 && !fixed[v->first]) q.push(v->first);
-		}
-	}
-	for(int i = 0; i < n; i++){
-		if(fixed[i] || cnt[i] >= 3) I[i] = true;
-		else I[i] = false;
-	}
-}
-
 
 // Inserta el nodo u al individuo
 void SteinerTree::insert(int u){

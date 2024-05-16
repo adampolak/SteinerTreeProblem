@@ -906,8 +906,6 @@ void MA::replacement(){
 	//Select next N - 1 solution
 	double D = DI - DI * elapsedTime / finalTime;
 	//cout << "Distancia requerida: " << D << endl;
-	set<long long> acceptedFitness;
-	acceptedFitness.insert(population[0]->ind.fitness);
 	while(population.size() != N){
 		//Update distances
 		for (int i = 0; i < all.size(); i++){
@@ -920,10 +918,6 @@ void MA::replacement(){
 			bool eqInDist = (all[i]->dist == all[indexBest]->dist);
 			bool betterInFit = (all[i]->ind.fitness < all[indexBest]->ind.fitness);
 			bool eqInFit = (all[i]->ind.fitness == all[indexBest]->ind.fitness);
-			/*if ((acceptedFitness.count(all[indexBest]->ind.fitness) != 0) && (acceptedFitness.count(all[i]->ind.fitness) == 0)){
-				indexBest = i;
-			} else if ((acceptedFitness.count(all[indexBest]->ind.fitness) == 0) && (acceptedFitness.count(all[i]->ind.fitness) != 0)){
-			} else */
 			if (all[indexBest]->dist < D){//Do not fulfill distance requirement
 				if ((betterInDist) || (eqInDist && betterInFit)){
 					indexBest = i;
@@ -940,7 +934,6 @@ void MA::replacement(){
 		//Insert best option
 		//cout << "Elegido tiene distancia: " << all[indexBest]->dist << endl;
 		population.push_back(all[indexBest]);
-		acceptedFitness.insert(all[indexBest]->ind.fitness);
 		all[indexBest] = all.back();
 		all.pop_back();
 	}

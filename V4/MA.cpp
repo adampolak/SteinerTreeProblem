@@ -13,7 +13,6 @@ void printer(int signal){
 
 MA::MA(int N_, double pc_, double pm_, double finalTime_){
 	signal(SIGTERM, printer);
-	//signal(SIGALRM, printer);
 	N = N_;
 	if (N % 2){ cerr << "El tam. de poblacion debe ser par" << endl; exit(-1); }
 	pc = pc_;
@@ -38,12 +37,12 @@ void MA::initPopulation(){
 			gettimeofday(&currentTime, NULL);
 			double time2 = ((double) (currentTime.tv_sec) * 1.0e6 + (double) (currentTime.tv_usec))/1.0e6;
 			double elapsed = time2 - time;
+			//cout << "Va: " << elapsed << endl;
 			if (elapsed > 30 * 60.0 / 500){
 				N = i + 1;
 			}
 		}
 	}
-	//cout << "Tam. pob: " << N << endl;
 }
 
 //Select parents with binary selection
@@ -53,23 +52,12 @@ void MA::selectParents(){
 		parents.push_back(population[0]);
 		parents.push_back(population[0]);
 	}
-	int lastSelected;
 	for (int i = parents.size(); i < N; i++){
 		int first = getRandomInteger0_N(N - 1);
 		int second = getRandomInteger0_N(N - 1);
 		if (population[first]->ind.fitness <= population[second]->ind.fitness){
-			/*if ((i % 2 == 1) && (first == lastSelected)){ 
-				i--;
-				continue;
-			}*/
-			lastSelected = first;
 			parents.push_back(population[first]);
 		} else {
-			/*if ((i % 2 == 1) && (second == lastSelected)){
-				i--;
-				continue;
-			}*/
-			lastSelected = second;
 			parents.push_back(population[second]);
 		}
 	}
@@ -108,13 +96,11 @@ void MA::replacement(){
 	
 	//Join population and offspring
 	for (int i = 0; i < population.size(); i++){
-		//cout << "Valor: " << population[i]->ind.fitness << endl;
 		all.push_back(population[i]);
 		all.back()->dist = INT_MAX;
 	}
 	population.clear();
 	for (int i = 0; i < offspring.size(); i++){
-		//cout << "Valor: " << offspring[i]->ind.fitness << endl;
 		all.push_back(offspring[i]);
 		all.back()->dist = INT_MAX;
 	}
@@ -127,7 +113,6 @@ void MA::replacement(){
 			indexBest = i;
 		}
 	}
-	//cout << "Mete a: " << all[indexBest]->ind.fitness << endl;
 	population.push_back(all[indexBest]);
 	all[indexBest] = all.back();
 	all.pop_back();
@@ -140,8 +125,6 @@ void MA::replacement(){
 	//Select next N - 1 solution
 	double D = DI - DI * elapsedTime / finalTime;
 	//cout << "Distancia requerida: " << D << endl;
-	map<long long, int> acceptedFitness;
-	acceptedFitness[population[0]->ind.fitness]++;
 	while(population.size() != N){
 		//Update distances
 		for (int i = 0; i < all.size(); i++){
@@ -154,14 +137,9 @@ void MA::replacement(){
 			bool eqInDist = (all[i]->dist == all[indexBest]->dist);
 			bool betterInFit = (all[i]->ind.fitness < all[indexBest]->ind.fitness);
 			bool eqInFit = (all[i]->ind.fitness == all[indexBest]->ind.fitness);
-			/*if ((acceptedFitness[all[indexBest]->ind.fitness] > N / 5.0) && (acceptedFitness[all[i]->ind.fitness] <= N / 5.0)){
-				indexBest = i;
-			} else if ((acceptedFitness[all[indexBest]->ind.fitness] <= N/5.0) && (acceptedFitness[all[i]->ind.fitness] > N / 5.0)){
-			} else */
 			if (all[indexBest]->dist < D){//Do not fulfill distance requirement
 				if ((betterInDist) || (eqInDist && betterInFit)){
 					indexBest = i;
-					//cout << "Entra: " << all[indexBest]->dist << endl;
 				}
 			} else {
 				if (all[i]->dist >= D){
@@ -172,9 +150,7 @@ void MA::replacement(){
 			}
 		}
 		//Insert best option
-		//cout << "Elegido tiene distancia: " << all[indexBest]->dist << endl;
 		population.push_back(all[indexBest]);
-		acceptedFitness[all[indexBest]->ind.fitness]++;
 		all[indexBest] = all.back();
 		all.pop_back();
 	}
@@ -200,22 +176,7 @@ void MA::run(){
 	initPopulation();
 	initDI();
 	generation = 0;
-	while(true){//Infinitas generaciones
-		/*int minDistance = INT_MAX;
-		int maxDistance = 0;
-		cout << "Fitness" << endl;
-		for (int i = 0; i < population.size(); i++){
-			cout << population[i]->ind.fitness << endl;
-			for (int j = i + 1; j < population.size(); j++){
-				int d = population[i]->ind.getDistance(population[j]->ind);
-				maxDistance = max(maxDistance, d);
-				minDistance = min(minDistance, d);
-			}
-		}
-		cout << "Min Distancia: " << minDistance << endl;
-		cout << "Max Distancia: " << maxDistance << endl;*/
-
-		//cout << "Generacion " << generation << endl;
+	while(true){
 		selectParents();
 		crossover();
 		mutation();

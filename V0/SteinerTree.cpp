@@ -517,19 +517,3 @@ void SteinerTree::dijkstra(int u, int N, vector<long long> &disti, vector<vector
         }
     }
 }
-
-void SteinerTree::all_min_dist(vector<vector<pair<int, long long> > > &adj, vector<vector<long long> > &dist, vector<bool> &G){
-    int N = dist.size();
-
-    dist.resize(N);
-    for(int i=0; i<N; i++)  dist[i].resize(N);
-
-    for(int i=0; i<N; i++){
-        if(G[i]){
-            dijkstra(i, N, dist[i], adj);
-        }
-    }
-}
-
-
-

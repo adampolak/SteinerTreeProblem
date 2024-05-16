@@ -141,7 +141,6 @@ void printBest(){
 	if (!bestI.isCorrect(mst)){
 		cout << "Error interno!!!!" << endl;
 	}
-	// printf("%s\n", bestI.isCorrect(mst) ? "YES" : "NO");
 }
 
 
