@@ -1,13 +1,14 @@
 #include "MA.h"
+#include <unistd.h>
 
 int main(int argc, char **argv){
+	// alarm(30 * 60 + 10);
 	int N = 50;
 	double pc = 0.9;
 	double pm = 0.01;
-	double finalTime = 25 * 60;
+	double finalTime = 30 * 60;
 	MA ma(N, pc, pm, finalTime);
-	srand(time(NULL));
-	//string file = string(argv[1]);
+	srand(888);
 	SteinerTreeProblem STP;
 	SteinerTree::SteinerTreeproblem = &STP;
 	ma.run();
