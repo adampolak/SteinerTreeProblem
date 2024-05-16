@@ -133,71 +133,9 @@ void SteinerTree::erase(int u){
 void printBest(){
 	unordered_map<int, vector<pair<int, long long> > > mst;
 	bestI.getMST(mst);
-	//bestI.print(mst);
-	bool correct = bestI.isCorrect(mst);
-	//printf("%s\n", correct ? "YES" : "NO");
-	if(!correct){
-		printf("NO\n");
-	}
-	else bestI.print(mst);
+  bestI.print(mst);
 }
 
-
-
-// Primera implementacion de una busqueda por escalada
-void SteinerTree::hillClimbing(){
-}
-
-bool SteinerTree::isCorrect(unordered_map<int, vector<pair<int, long long> > > &mst){
-	int cnt = 0;
-	vector<bool> visited(I.size());
-	bool ans = true;
-	long long fitnessAux = 0;
-	FOREACH(u, SteinerTreeproblem->fs){
-		if(!I[*u]){
-			printf("u = %d\n", *u);
-			ans = false;
-		}
-		if(!visited[*u]){
-			int totalNodes = 0, totalEdges = 0;
-			queue<int> q; q.push(*u);
-			visited[*u] = true;
-			while(!q.empty()){
-				int v = q.front(); q.pop();
-				totalNodes++;
-				FOREACH(w, mst[v]){
-					if(!visited[w->first]){
-						q.push(w->first);
-						visited[w->first] = true;
-						fitnessAux += w->second;
-					}
-					if(w->first < v) totalEdges++;
-				}
-			}
-			if(totalEdges != totalNodes - 1){
-				printf("t = %d, t = %d\n", totalEdges, totalNodes);
-				ans = false;
-			}
-			cnt++;
-		}
-	}
-	if(fitnessAux > Globalbest){
-		printf("fitnessAux = %lld, fitness = %lld\n", fitnessAux, Globalbest);
-		ans = false;
-	}
-	else Globalbest = fitnessAux;
-	if(cnt != 1){
-		printf("cnt = %d\n", cnt);
-		ans = false;
-	}
-	return ans;
-}
-
-void SteinerTree::localSearch(){
-	return;
-	hillClimbing();
-	printf("fitness = %lld %lld\n", fitness, Globalbest);
-}
 
 void SteinerTree::reset(){
 	edges.clear();
@@ -224,7 +162,6 @@ SteinerTreeProblem::SteinerTreeProblem(){
 		edges.push_back(edge(u, v, w));
 		adj[u].push_back(make_pair(v, w));
 		adj[v].push_back(make_pair(u, w));
-		//if(w == 0) while(true) printf("u = %d, v = %d\n", u, v);
 	}
 	sort(edges.begin(), edges.end());
 	maxThreshold = edges[edges.size() / 2].w * 2;
@@ -422,7 +359,6 @@ void SteinerTreeProblem::dijkstra(vector<int> &u, vector<long long> &dist, vecto
 			}
 		}
 		if (I[n] && (!tree[n])){
-			//return;
 			if(!found) value = dist[n], found = true;
 		}
 		if(found && dist[n] > value + currentTol) return;
@@ -543,7 +479,6 @@ void SteinerTree::evaluateMinDistances(){
 				exit(0);
 			}
 		}
-		//cout << "El contador es: " << counter << endl;
 		vector<bool> copyI = I;
 		vector<bool> otherI(copyI.size());
 		for(int u = 0; u < (SteinerTreeproblem->n); u++){

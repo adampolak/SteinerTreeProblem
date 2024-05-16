@@ -82,7 +82,6 @@ class SteinerTree{
 		void insert(int u);
 		void erase(int u);
 		void print(unordered_map<int, vector<pair<int, long long> > > &mst);
-		bool isCorrect(unordered_map<int, vector<pair<int, long long> > > &mst);
 
 		vector<bool> I;
 		long long fitness;

@@ -139,9 +139,6 @@ void printBest(){
 	unordered_map<int, vector<pair<int, long long> > > mst;
 	bestI.getMST(mst);
 	bestI.print(mst);
-	if (!bestI.isCorrect(mst)){
-		cout << "Error interno!!!!" << endl;
-	}
 }
 
 
@@ -171,8 +168,6 @@ void SteinerTree::hillClimbing(){
 				bestI = *this;
 				sigprocmask(SIG_UNBLOCK, &sign, NULL);
 			}
-			//best = min(best, fitness);
-			//printf("Fitness = %lld %lld\n", fitness, best);
 			long long F = fitness;
 			vector<bool> nI = I;
 			if(I[p[i]]){
@@ -198,47 +193,8 @@ void SteinerTree::hillClimbing(){
 	}
 }
 
-bool SteinerTree::isCorrect(unordered_map<int, vector<pair<int, long long> > > &mst){
-	int cnt = 0;
-	vector<bool> visited(I.size());
-	bool ans = true;
-	FOREACH(u, SteinerTreeproblem->fs){
-		if(!I[*u]){
-			printf("u = %d\n", *u);
-			ans = false;
-		}
-		if(!visited[*u]){
-			int totalNodes = 0, totalEdges = 0;
-			queue<int> q; q.push(*u);
-			visited[*u] = true;
-			while(!q.empty()){
-				int v = q.front(); q.pop();
-				totalNodes++;
-				FOREACH(w, mst[v]){
-					if(!visited[w->first]){
-						q.push(w->first);
-						visited[w->first] = true;
-					}
-					if(w->first < v) totalEdges++;
-				}
-			}
-			if(totalEdges != totalNodes - 1){
-				printf("t = %d, t = %d\n", totalEdges, totalNodes);
-				ans = false;
-			}
-			cnt++;
-		}
-	}
-	if(cnt != 1){
-		printf("cnt = %d\n", cnt);
-		ans = false;
-	}
-	return ans;
-}
-
 void SteinerTree::localSearch(){
 	hillClimbing();
-	//printf("fitness = %lld %lld\n", fitness, best);
 }
 
 void SteinerTree::reset(vector<bool> &nI){

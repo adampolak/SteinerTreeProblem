@@ -151,14 +151,7 @@ SteinerTree bestI;
 void printBest(){
 	unordered_map<int, vector<pair<int, long long> > > mst;
 	bestI.getMST(mst);
-	//bestI.print(mst);
-	bool correct = bestI.isCorrect(mst);
-	//printf("%s\n", correct ? "YES" : "NO");
-	if(!correct){
-		printf("NO\n");
-		//getchar();
-	}
-	else bestI.print(mst);
+    bestI.print(mst);
 }
 
 
@@ -209,51 +202,6 @@ void SteinerTree::hillClimbing(){
 			if(noImprove > 5) return;
 		}
 	}
-}
-
-bool SteinerTree::isCorrect(unordered_map<int, vector<pair<int, long long> > > &mst){
-	int cnt = 0;
-	vector<bool> visited(I.size());
-	bool ans = true;
-	long long fitnessAux = 0;
-	FOREACH(u, SteinerTreeproblem->fs){
-		if(!I[*u]){
-			printf("u = %d\n", *u);
-			ans = false;
-		}
-		if(!visited[*u]){
-			int totalNodes = 0, totalEdges = 0;
-			queue<int> q; q.push(*u);
-			visited[*u] = true;
-			while(!q.empty()){
-				int v = q.front(); q.pop();
-				totalNodes++;
-				FOREACH(w, mst[v]){
-					if(!visited[w->first]){
-						q.push(w->first);
-						visited[w->first] = true;
-						fitnessAux += w->second;
-					}
-					if(w->first < v) totalEdges++;
-				}
-			}
-			if(totalEdges != totalNodes - 1){
-				printf("t = %d, t = %d\n", totalEdges, totalNodes);
-				ans = false;
-			}
-			cnt++;
-		}
-	}
-	if(fitnessAux > Globalbest){
-		printf("fitnessAux = %lld, fitness = %lld\n", fitnessAux, Globalbest);
-		ans = false;
-	}
-	else Globalbest = fitnessAux;
-	if(cnt != 1){
-		printf("cnt = %d\n", cnt);
-		ans = false;
-	}
-	return ans;
 }
 
 void SteinerTree::localSearch(){
@@ -434,7 +382,6 @@ void SteinerTree::uniformMutation(double pm){
 	//reset(I);
 	if (changed){
 		calculateFitness();
-		//cout << "Comp: " << prevFitness << " " << fitness << endl;
 		if (prevFitness < fitness){
 			I = prevI;
 			fitness = prevFitness;
@@ -443,11 +390,9 @@ void SteinerTree::uniformMutation(double pm){
 }
 
 void SteinerTree::dependentMutation(double pm){
-	//cout << "empieza mut" << endl;
 	for (int i = 0; i < 10; i++){
 		uniformMutation(1.0 / (SteinerTreeproblem->n));
 	}
-	//cout << "termina" << endl;
 }
 
 void SteinerTree::dependentCrossover(SteinerTree &ind){
@@ -567,11 +512,9 @@ void SteinerTree::evaluateMinDistances(){
 			bestTree = tree;
 			cnt_break = 0;
 			if(fitness < Globalbest){
-				//cout << "Va por " << fitness << endl;
 				sigset_t sign;
 				sigemptyset(&sign);
 				sigaddset(&sign, SIGTERM);
-				//sigaddset(&sign, SIGALRM);
 				sigprocmask(SIG_BLOCK, &sign, NULL);
 				Globalbest = fitness;
 				bestI.I = bestTree;
@@ -587,11 +530,6 @@ void SteinerTree::evaluateMinDistances(){
 	}
 	I = Ibest;
 	fitness = best;
-	/*if(fitness < Globalbest){
-		Globalbest = fitness;
-		bestI.I = bestTree;
-	}*/
-	//printf("best = %lld, fitness = %lld\n", Globalbest, fitness);
 }
 
 

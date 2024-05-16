@@ -82,10 +82,6 @@ bool SteinerTree::calculateFitness(){
 	int Su = -1;
 	Su = dsu.getS((SteinerTreeproblem->fs)[0]);
 	FOREACH(u, SteinerTreeproblem->fs) if(dsu.getS(*u) != Su) connected = false;
-	//FOREACH(v, dsu.used) if(dsu.getS(*v) != Su) connected = false;
-	//int t = 0;
-	//for(int u = 0; u < (SteinerTreeproblem->n); u++) if((SteinerTreeproblem->fixed)[u] && dsu.getS(u) != Su) connected = false;
-	//connected = (c == t - 1);
 	if(connected){
 		queue<int> q;
 		FOREACH(v, dsu.used) if(cnt[*v] == 1 && !(SteinerTreeproblem->fixed)[*v]) q.push(*v);
@@ -139,9 +135,6 @@ void printBest(){
 	unordered_map<int, vector<pair<int, long long> > > mst;
 	bestI.getMST(mst);
 	bestI.print(mst);
-	if (!bestI.isCorrect(mst)){
-		cout << "Error interno!!!!" << endl;
-	}
 }
 
 
@@ -196,44 +189,6 @@ void SteinerTree::hillClimbing(){
 	}
 }
 
-bool SteinerTree::isCorrect(unordered_map<int, vector<pair<int, long long> > > &mst){
-	int cnt = 0;
-	vector<bool> visited(I.size());
-	bool ans = true;
-	FOREACH(u, SteinerTreeproblem->fs){
-		if(!I[*u]){
-			printf("u = %d\n", *u);
-			ans = false;
-		}
-		if(!visited[*u]){
-			int totalNodes = 0, totalEdges = 0;
-			queue<int> q; q.push(*u);
-			visited[*u] = true;
-			while(!q.empty()){
-				int v = q.front(); q.pop();
-				totalNodes++;
-				FOREACH(w, mst[v]){
-					if(!visited[w->first]){
-						q.push(w->first);
-						visited[w->first] = true;
-					}
-					if(w->first < v) totalEdges++;
-				}
-			}
-			if(totalEdges != totalNodes - 1){
-				printf("t = %d, t = %d\n", totalEdges, totalNodes);
-				ans = false;
-			}
-			cnt++;
-		}
-	}
-	if(cnt != 1){
-		printf("cnt = %d\n", cnt);
-		ans = false;
-	}
-	return ans;
-}
-
 void SteinerTree::localSearch(){
 	hillClimbing();
 }
@@ -247,8 +202,6 @@ void SteinerTree::reset(vector<bool> &nI){
 }
 
 SteinerTreeProblem::SteinerTreeProblem(){
-	//ifstream ifs;
-	//ifs.open(fileName.c_str());
 	string s;
 	cin >> s;
 	cin >> s;

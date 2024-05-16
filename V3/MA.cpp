@@ -82,12 +82,6 @@ void MA::mutation(){
 	}
 }
 
-void MA::localSearch(){
-	for (int i = 0; i < offspring.size(); i++){
-		offspring[i]->ind.localSearch();
-	}
-}
-
 
 void MA::replacement(){
 	vector < ExtendedIndividual* > all;
@@ -176,7 +170,6 @@ void MA::run(){
 		selectParents();
 		crossover();
 		mutation();
-		localSearch();
 		replacement();
 		generation++;
 	}

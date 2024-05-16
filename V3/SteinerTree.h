@@ -75,7 +75,6 @@ class SteinerTree{
 		void uniformMutation(double pm);
 		void pathMutation(int k);
 		void localSearch();
-		void hillClimbing();
 		void dependentCrossover(SteinerTree &ind);
 		void uniformCrossover(SteinerTree &ind);
 		void addCrossover(SteinerTree &ind2);
@@ -85,7 +84,6 @@ class SteinerTree{
 		void insert(vector<int> us);
 		void erase(int u);
 		void print(unordered_map<int, vector<pair<int, long long> > > &mst);
-		bool isCorrect(unordered_map<int, vector<pair<int, long long> > > &mst);
 		vector<bool> I;
 		long long fitness;
 		set<edge> edges;
