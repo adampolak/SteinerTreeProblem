@@ -109,6 +109,7 @@ bool SteinerTree::calculateFitness2(){
 		}
 		Globalbest = fitness;
 		sigprocmask(SIG_UNBLOCK, &sign, NULL);
+		cerr << "value " << Globalbest << endl;
 	}
 	return true;
 }

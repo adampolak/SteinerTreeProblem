@@ -113,6 +113,9 @@ void MA::replacement(){
 	double elapsedTime = (double) (currentTime.tv_sec) + (double) (currentTime.tv_usec)/1.0e6;
 	elapsedTime -= initialTime;
 
+	cerr << "time " << elapsedTime << endl;
+	if (elapsedTime > 30 * 60) finished = true;
+
 	//Select next N - 1 solution
 	double D = DI - DI * elapsedTime / finalTime;
 	while(population.size() != N){
@@ -169,7 +172,6 @@ void MA::run(){
 		selectParents();
 		crossover();
 		mutation();
-		localSearch();
 		replacement();
 		generation++;
 	}
