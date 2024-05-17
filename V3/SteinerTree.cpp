@@ -519,6 +519,7 @@ void SteinerTree::evaluateMinDistances(){
 				Globalbest = fitness;
 				bestI.I = bestTree;
 				sigprocmask(SIG_UNBLOCK, &sign, NULL);
+				cerr << "value " << Globalbest << endl;
 			}
 		}
 		else cnt_break++;
